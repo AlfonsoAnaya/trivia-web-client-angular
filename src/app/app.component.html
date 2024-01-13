@@ -3,11 +3,10 @@
       <div class="container">
           <nav class="navbar" role="navigation" aria-label="main navigation">
               <div class="navbar-menu is-active buttons">
-                  <button class="button is-link">Home</button>
-                  <button class="button is-link">Trivia Game</button>
+                <button class="button is-link" [routerLink]="['']">Home</button>
+                <button class="button is-link" [routerLink]="['/trivia']">Trivia Game</button>
               </div>
           </nav>
-          <app-home></app-home>
           <app-trivia-game></app-trivia-game>
       </div>
   </section>
