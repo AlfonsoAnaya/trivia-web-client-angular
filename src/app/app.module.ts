@@ -6,13 +6,15 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { TriviaGameComponent } from './trivia-game/trivia-game.component';
 import { HttpClientModule } from '@angular/common/http';
+import { PlayerFormComponent } from './player-form/player-form.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    TriviaGameComponent
+    TriviaGameComponent,
+    PlayerFormComponent
   ],
   imports: [
     BrowserModule,
