@@ -3,6 +3,7 @@ import { Player, PlayerService } from '../player.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { TriviaService } from '../trivia.service';
+import { NgZone } from '@angular/core';
 
 @Component({
   selector: 'app-trivia-game',
@@ -15,10 +16,13 @@ export class TriviaGameComponent implements OnInit {
   errorMessage: any;
   isLoading: boolean = true;
   question: any;
+  answers: any[] = [];
   private destroy$: Subject<void> = new Subject<void>();
 
-  constructor(private playerService: PlayerService,
-    private triviaService: TriviaService,) { }
+  constructor(
+    private playerService: PlayerService,
+    private triviaService: TriviaService, 
+    private zone: NgZone) { }
 
   ngOnInit(): void {
     this.getPlayers();
@@ -76,12 +80,58 @@ export class TriviaGameComponent implements OnInit {
       .subscribe(
         {
           next: (response: any) => {
-            this.question = response.results[0],
-            console.log(Object.keys(this.question));
+            this.question = response.results[0];
+            console.log(this.question);
+            this.answers = [];
+            this.answers.push(this.question.correct_answer);
+            this.question.incorrect_answers.forEach((element:any) => this.answers.push(element));
+            this.answers.sort(() => (Math.random() > .5) ? 1 : -1)
+            console.log(this.answers);
           },
           error: (error) => (this.errorMessage = <any>error)
         }
       );
+  }
+
+  rightAnswer(id: any) {
+    let data = {
+      correct: true
+    }
+    this.answer(id, data)
+  }
+
+  wrongAnswer(id: any) {
+    let data = {
+      correct: false
+    }
+    this.answer(id, data)
+  }
+
+  answer(id: any, data: any) {
+    let player: any = this.findPlayer(id)
+    player.isUpdating = true
+    this.playerService
+      .answer(id, data)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          this.zone.run(() => {
+            player.answers = response.answers;
+            player.points = response.points;
+            player.isUpdating = false;
+            this.getPlayers();
+          });
+        },
+        error: (error: any) => (
+          this.errorMessage = <any>error,
+          player.isUpdating = false)
+      }
+    );
+    
+  }
+
+  trackPlayerById(index: any, player: Player): any {
+    return player.id;
   }
 
 

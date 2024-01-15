@@ -12,12 +12,14 @@
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let player of players">
+            <tr *ngFor="let player of players; trackBy: trackPlayerById">
                 <td>{{ player.id }}</td>
                 <td>{{ player.name }}</td>
                 <td>{{ player.answers }}</td>
                 <td>{{ player.points }}</td>
                 <td>
+                    <button class="button is-primary" [class.is-loading]="isUpdating(player.id)" (click)="rightAnswer(player.id)">Right (+1)</button>&nbsp;
+                    <button class="button is-primary" [class.is-loading]="isUpdating(player.id)" (click)="wrongAnswer(player.id)">Wrong (-1)</button>&nbsp;
                     <button class="button is-primary" [class.is-loading]="isUpdating(player.id)" (click)="deletePlayer(player.id)">Delete Player</button>
                 </td>
             </tr>
@@ -35,11 +37,19 @@
         <p class="subtitle">
           {{ question.category }}
         </p>
+        <div class="Options">
+            <ul>
+                <li *ngFor="let answer of answers">{{ answer }}</li>
+            </ul>
+        </div>
       </div>
       <footer class="card-footer">
         <p class="card-footer-item">
             <span>
-                Correct answer: {{ question.correct_answer }}
+                Correct answer: 
+                <span class="hidden-answer button">
+                    {{ question.correct_answer }}
+                </span>
             </span>
         </p>
       </footer>

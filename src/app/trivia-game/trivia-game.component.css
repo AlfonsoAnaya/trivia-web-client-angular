@@ -2,3 +2,11 @@
     border-radius: 50px;
     padding: 1rem 2.5rem;
 }
+
+.hidden-answer {
+    background-color: rgb(54, 54, 54)
+}
+
+.hidden-answer:hover {
+    background-color: white;
+}
